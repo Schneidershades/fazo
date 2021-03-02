@@ -22,7 +22,6 @@
                                 <!-- Search Flights
                                     ============================================= -->
                                 <div>
-                                    <!-- <livewire:flight-check> -->
                                     <h2 class="font-weight-600 mb-4">Search Flights</h2>
                                     <form id="bookingFlight" method="post" action="{{route('flight-check')}}">
                                         @csrf
