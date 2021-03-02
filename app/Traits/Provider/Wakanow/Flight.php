@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Traits\ApiProvider\Payments;
+namespace App\Traits\Provider\Wakanow;
 
 use Illuminate\Support\Facades\Http;
 
-class Flutterwave
+class Flight
 {
     public function credentials($testing_api)
     {
@@ -30,16 +30,26 @@ class Flutterwave
     {
         $credential = $this->credentials('test');
 
-        $content = Http::post($credential['url'] . '/token', $credential);
+        $data = [
+            'grant_type' => 'password',
+            'username' => '15a9efddb90c4a678768b8bf78707afa',
+            'password' => '_0GZIjuqlC',
+        ];
 
-        $resp = json_decode($response->body(), true);
+        $content = Http::withOptions([
+            'verify' => false,
+        ])->post($credential['url'] . '/token', $data);
+
+        $resp = json_decode($content->body(), true);
+
+        dd($resp);
 
         return $resp;
     }
 
     public function searchFlight($request)
     {
-        if($request['flightType'] == 'Oneway'){
+        if ($request['flightType'] == 'Oneway') {
             $data = [
                 "FlightSearchType" => "Oneway",
                 "Adults" => "1",
@@ -51,10 +61,10 @@ class Flutterwave
                     [
                         "Departure" => "LOS",
                         "Destination" => "DXB",
-                        "DepartureDate" => "05/03/2021"
+                        "DepartureDate" => "10/03/2021"
                     ]
                 ]
-            ]
+            ];
         }
 
         if($request['flightType'] == 'Return'){
@@ -77,14 +87,16 @@ class Flutterwave
                         "DepartureDate" => "11/23/2017"
                     ]
                 ]
-            ]
+            ];
         }
 
         $item = $this->authenticate();
 
-        $content = Http::withToken($item->access_token)->post($credential['url'] . '/api/flight/search', $data);
+        $content = Http::withOptions([
+            'verify' => false,
+        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/search', $data);
 
-        $resp = json_decode($response->body(), true);
+        $resp = json_decode($content->body(), true);
 
         return $resp;
     }
@@ -92,7 +104,7 @@ class Flutterwave
     public function selectFlight($request)
     {
         $data = [
-            "TargetCurrency":"NGN",
+            "TargetCurrency" => "NGN",
             "SelectData" => "
             oRIAAB+LCAAAAAAABADlV21v4zYM/iuCP92ANvBL3DT+lpeuyNqmXWNgA4Z+YGIlESpLmSy3NYr+91G2nMSt013vhtvu9iWJSYqkHj4knW
             fnZ85Waz2S6ZwJ0EyKW5rlXDvRs1VlTvTHszOFlDqREwaBc+QMmOJMmOeLX3eP1uSCigIIyh6hyFA7phtQOld0JBOjv7ye7UvtqUtYyYZ1
@@ -113,9 +125,11 @@ class Flutterwave
 
         $item = $this->authenticate();
 
-        $content = Http::withToken($item->access_token)->post($credential['url'] . '/api/flight/select', $data);
+        $content = Http::withOptions([
+            'verify' => false,
+        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/select', $data);
 
-        $resp = json_decode($response->body(), true);
+        $resp = json_decode($content->body(), true);
 
         return $resp;
     }
@@ -147,7 +161,7 @@ class Flutterwave
             "BookingItemModels" => [
                 [
                     "ProductType" => "Flight",
-                    "BookingData":
+                    "BookingData" =>
                     "qxQAAB+LCAAAAAAABADdV1tP6zgQ/itWnliJVrk0tM1baVnUBUqXRtqVVjw4idNauHbXcYAI8d/POHHahl4OnHP2cnihZGY8M/7mm5nkxfqV0flCDcUyohwrKvgdyXKmrODFqDIr+OvFmuAlsQLL9zzr1BpQySjXz1e/bx6NyRXhBUYge8JFBtoRWWGpckmGItH669vZttScusZz0bAOaSl3bafbcpyW44eOGzh+YNs6opT0ETNzdpRHmG6kJs7oz/ON7K23bmg74KryNlNiBbd0qv+MqdOGeB0TL5R0NcpliU+ps/trnT4zpKqwAp4zdmpQuybzCrgPXB+d3ORSYYbRTb7AyyVJ0JgrIqu6YKZBXQmpfikdZMoUzDienN825cb1BFMpIop+E0uByuIohdHJfjHeRJgpyPBoFS54skffDzyj30LM9gPXoD3ONGJWkGKWkVO4eSEeifyORI2HrWiut452LsQD5fMhwxnUwwpBNMRA9Vpw0xAYyC5iwcWyANXtimiv4AADkco0S8q/lR/g/g2WD2TP8Yojk3wZlbJ1V8USp9B6VtfraSsMbVCstOO7c/Mc4YxmpuLhOJxc6vyFxgKrmmJn/U7f99dhZoSRWI2wwhVFX093WVmTp8nKb63ILjmrZtwlZ9m66KT6OUj2vVQ8C51e4B+mYqPFm1S0/eNUrBp5l1elt5+IV55jv+FV75/k1b1mlsnYs/3vXRQ1Z5qcrIf9oUXheqF9tuZFc1HUS6a5KKqJvH9RuJ3QcQLXP7oo7E7g2YcWRXet++CiOHL9rzbMf7MdmtDvtiToAUxnb0s6X2nJH7kdnJ+si+tW+rTboX4nekvOD78V7WVlJ7R7a9btYWWjxT/Gys+yKHzP/Tcpdv96D7USuYy19WCJE5JnpR/OwRIwHCeaYJet2zSlYLStMjHsLkinUmvhU2WwFDmHxJ1ev9fptt0enMilJDwuag5fTqzXw4AMEvjoqWb7cEFZAketwIbK8xRzrbBNtBFRmLJqZE+hYoTPiTQglU6shqHRnOOMVMnuSbrfPXM6bftQyoPVilGS6GOQ913OSE28i+d4gSH+HUAPqWsXxnhG5CNE2TYuw455BXsdaTsNezeFaiCYUjWjgbUeFe+HIMTPey9vuz3n01/eTCx2AASn77tHSPv/BeG+Ggo6im4JK6QxtFeGBpKgieCtO5LmPMERK4nPCLQBIjyDJYLUAitUiBwt8CNBGMHLF03QI80wikgqwAKUEtHGrFcSjFkb/YEfMBdP7Vgs0RNlDHGh4BhaEJYgRnVAFBX11kE4VwshqaIkQzTdRNWn0pyl4AHWShmvTECSv3MqyZJA67eRfq9b0AxV0wzpCyN9Y9RCAKn2WyAXHi74nNFsgULyrFkwljA6UCwJoJXAdcHD2tzZ56xxHpCdEriyKtbgDjGPCWMlFgjzBMFIJWhYlgStKmOEdfljDUAbTWtZWd8KqISAZYLAg1qQyoN2pZciEilqxBByO0Rb53RJxFzi1aIoJzSfa2yEqoj9LiaZb4CNTG/XLZrUO3bMY5YnZIqL2RIzVv6xAiVz0I3EEweFLk/VZWM+JcBPrvAcPHh6Vm+fuxbxQ3mm6jvf6/d7uoOtGckyuOgVKTZ7KCB2fJZ48GaQRulZq5PEUSvq9nELd52470Q91yVR3cTnUN2HXH8UvFhvIOi7rucdaWow/6G9CLDQLK4OH3Vj6ejr0fX+pVbLh2ZmfXyTffMAgjeG1y/XdifYqxQAAA==",
                     "BookingId" => "1707310600002",
                     "TargetCurrency" => "NGN"
@@ -158,25 +172,11 @@ class Flutterwave
 
         $item = $this->authenticate();
 
-        $content = Http::withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
+        $content = Http::withOptions([
+            'verify' => false,
+        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
 
-        $resp = json_decode($response->body(), true);
-
-        return $resp;
-    }
-
-    public function ticketFlight($request)
-    {
-        $data = [
-            "BookingId" => "1707310600002",
-            "PnrNumber" => " UPTR7U "
-        ];
-
-        $item = $this->authenticate();
-
-        $content = Http::withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
-
-        $resp = json_decode($response->body(), true);
+        $resp = json_decode($content->body(), true);
 
         return $resp;
     }
@@ -190,9 +190,11 @@ class Flutterwave
 
         $item = $this->authenticate();
 
-        $content = Http::withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
+        $content = Http::withOptions([
+            'verify' => false,
+        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
 
-        $resp = json_decode($response->body(), true);
+        $resp = json_decode($content->body(), true);
 
         return $resp;
     }
