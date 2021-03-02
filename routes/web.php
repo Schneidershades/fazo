@@ -10,4 +10,4 @@ Route::get('/', function () {
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::post('/flight-check', [App\Http\Controllers\Flight\FlightCheckController::class, 'store'])->name('flight-check');
+Route::post('flight-check', [App\Http\Controllers\Flight\FlightCheckController::class, 'store'])->name('flight-check');
