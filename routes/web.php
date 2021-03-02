@@ -9,3 +9,5 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::post('/flight-check', [App\Http\Controllers\Flight\FlightCheckController::class, 'store'])->name('flight-check');

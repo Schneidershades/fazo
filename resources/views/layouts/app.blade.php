@@ -40,7 +40,7 @@
                         <div class="header-column justify-content-start">
                             <!-- Logo
                                 ============================================= -->
-                            <div class="logo"> <a href="index-1.html" class="d-flex" title="Quickai - HTML Template"><img src="images/logo-1.png" alt="Quickai"></a> </div>
+                            <div class="logo"> <a href="index-1.html" class="d-flex" title="Quickai - HTML Template"><img src="images/logo-1.png" alt="Fazo"></a> </div>
                             <!-- Logo end --> 
                         </div>
                         <div class="header-column justify-content-end">
@@ -49,7 +49,7 @@
                             <nav class="primary-menu navbar navbar-expand-lg">
                                 <div id="header-nav" class="collapse navbar-collapse">
                                     <ul class="navbar-nav">
-                                        <li class="dropdown active">
+                                        <!-- <li class="dropdown active">
                                             <a class="dropdown-toggle" href="#">Home</a>
                                             <ul class="dropdown-menu">
                                                 <li class="dropdown">
@@ -333,7 +333,7 @@
                                                 <li><a class="dropdown-item" href="elements-1.html">Elements</a></li>
                                                 <li><a class="dropdown-item" href="elements-2-1.html">Elements 2</a></li>
                                             </ul>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                             </nav>
