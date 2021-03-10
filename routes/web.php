@@ -8,6 +8,8 @@ Route::get('/', function () {
 
 // Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::post('flight-check', [App\Http\Controllers\Flight\FlightCheckController::class, 'store'])->name('flight-check');
+Route::post('flight-check', 'Web\Flight\FlightCheckController@store')->name('flight-check');
+
+Route::get('flight-list', 'Web\Flight\FlightListController@store')->name('flight-list');

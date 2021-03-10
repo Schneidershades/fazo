@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
         <link href="assets/images/favicon-1.png" rel="icon">
-        <title>Quickai - Recharge & Bill Payment, Booking HTML5 Template</title>
+        <title>Fazo Travels</title>
         <meta name="description" content="Quickai - Recharge & Bill Payment, Booking HTML5 Template">
         <meta name="author" content="harnishdesign.net">
         <!-- Web Fonts
@@ -505,8 +505,8 @@
                                 <a class="nav-link" href="#">Privacy Policy</a>
                             </li>
                         </ul>
-                        <p class="copyright-text">Copyright © 2020 
-                            <a href="#">Quickai</a>. All Rights Reserved.
+                        <p class="copyright-text">Copyright © 2021
+                            <a href="#">Fazo Travels</a>. All Rights Reserved.
                         </p>
                     </div>
                 </div>

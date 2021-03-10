@@ -3,6 +3,7 @@
 namespace App\Traits\Provider\Wakanow;
 
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class Flight
 {
@@ -38,100 +39,75 @@ class Flight
 
         $content = Http::withOptions([
             'verify' => false,
-        ])->post($credential['url'] . '/token', $data);
+        ])->asForm()->post($credential['url'] . '/token', [
+            'grant_type' => 'password',
+            'username' => '15a9efddb90c4a678768b8bf78707afa',
+            'password' => '_0GZIjuqlC',
+        ]);
 
         $resp = json_decode($content->body(), true);
-
-        dd($resp);
 
         return $resp;
     }
 
     public function searchFlight($request)
     {
-        if ($request['flightType'] == 'Oneway') {
+        $credential = $this->credentials('test');
+
+        if ($request->flightSearchType == 'Oneway') {
             $data = [
-                "FlightSearchType" => "Oneway",
-                "Adults" => "1",
-                "Children" => "0",
-                "Infants" => "0",
+                "FlightSearchType" => $request->flightSearchType,
+                "Adults" => (string)$request->adults,
+                "Children" => (string)$request->children,
+                "Infants" => (string)$request->infants,
                 "Ticketclass" => "Y",
                 "TargetCurrency" => "NGN",
                 "Itineraries" => [
                     [
-                        "Departure" => "LOS",
-                        "Destination" => "DXB",
-                        "DepartureDate" => "10/03/2021"
+                        "Departure" => $request->departure,
+                        "Destination" => $request->destination,
+                        "DepartureDate" => Carbon::parse($request->depatureDate)->format('Y-m-d')
                     ]
                 ]
             ];
         }
 
-        if($request['flightType'] == 'Return'){
+        if($request->flightSearchType == 'Return'){
             $data = [
-                "FlightSearchType" => "Return",
-                "Adults" => "1",
-                "Children" => "0",
-                "Infants" => "0",
+                "FlightSearchType" =>$request->flightType,
+                "Adults" => (string)$request->adults,
+                "Children" => (string)$request->children,
+                "Infants" => (string)$request->infants,
                 "Ticketclass" => "Y",
                 "TargetCurrency" => "NGN",
                 "Itineraries" => [
                     [
-                        "Departure" => "LOS",
-                        "Destination" => "DXB",
-                        "DepartureDate" => "11/15/2017"
+                        "Departure" => $request->departure,
+                        "Destination" => $request->destination,
+                        "DepartureDate" => Carbon::parse($request->depatureDate)->format('Y-m-d')
                     ],
                     [
-                        "Departure" => "DXB",
-                        "Destination" => "LOS",
-                        "DepartureDate" => "11/23/2017"
+                        "Departure" => $request->destination,
+                        "Destination" => $request->departure,
+                        "DepartureDate" => Carbon::parse($request->returnDate)->format('Y-m-d')
                     ]
                 ]
             ];
         }
 
-        $item = $this->authenticate();
-
-        $content = Http::withOptions([
-            'verify' => false,
-        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/search', $data);
-
-        $resp = json_decode($content->body(), true);
-
-        return $resp;
+        return $this->sendRequest('/api/flight/search', $data);
     }
 
     public function selectFlight($request)
     {
+        $credential = $this->credentials('test');
+
         $data = [
             "TargetCurrency" => "NGN",
-            "SelectData" => "
-            oRIAAB+LCAAAAAAABADlV21v4zYM/iuCP92ANvBL3DT+lpeuyNqmXWNgA4Z+YGIlESpLmSy3NYr+91G2nMSt013vhtvu9iWJSYqkHj4knW
-            fnZ85Waz2S6ZwJ0EyKW5rlXDvRs1VlTvTHszOFlDqREwaBc+QMmOJMmOeLX3eP1uSCigIIyh6hyFA7phtQOld0JBOjv7ye7UvtqUtYyYZ1
-            zEq573q9Y8879sLY8yMvjFzXRFSKPQC3Z8f5HNhOauOMfx/uZK+9ncRuGAXW20zLDd7Sq35ZU68X+W6ljxXbjHNVomM03a3G2I+YLpxI5J
-            wfWcQu6aoC7QNXJ5+ucqWBA7nK15CmNCEToamqagLcALqRSv9UOsi0LZZ1PB1eN+XW9RSYknNGfpGpJGVhtAbyqV0MuwgzjRm+W4EzkbTo
-            +1tM9/BCpGu8JplBzImWwDN6hDcv5ANVX5Go9bAfLYi6NoehlPdMrEYcMqyHE6NoBEjzWnDVEFjIzhZSyLRA1fWGGq/oAJBEZZol3V/LD/
-            D+CtQ9bTlecWSap/NStu2ohYIltp3TC06NFWALFBvj+HZon+eQscxWPJ7E03OTvzRYgK4pdtLv9sNwG2ZGOV3oMWioKPpy9JaVNXmarPzS
-            irwlZ9WIb8lZti35VH0dJPsBKvrBllQtVGy0d5OKNYEPUbFq5BZemWjfEa8Ct/steXVnmGUzDtzwa5dEzZkmJ+tBf2hJ+EHsnkRh65KoF0
-            xzSVQTuX1J+N3Y8yL/3SXRcbtRcGBNdNzeVvfBRfHO9f+2Yf6d7dCE/m1Loh7B9Nwvacl/cDv43vfWxeEPvh3qd6LX5PzwW1ErK7uxe7pl
-            XQsrGy3+/1wUYeB/20Vxh7WSuVoY60EKCc2z0o8QaIkYThJDsPPj6+WSodG+ysZweyi9UUaLf1MGqcwFJu71+v2+1+l28USuFBWLoubw+d
-            R5OQzIIME/PNVsH60ZT/CoE7lYebEEYRSujTamGhivRvYNVoyKFVUWpNKJ0zC0miFktEq2JenTU7/nd9xDKQ82G85oYo5h3rc5pzXxzp4W
-            a8D4twg9pm5cWOMZVQ8YZd+4DDsRFex1pP003LcpVAPBlqoZDa3NqPh8CGJ4ar18vx92f/jL24nFD4Dg9U7Cd0j73wXhrhoKJoppCSdmC2
-            yvjAwUJVMpjm/pMhcJzHlJfE6xDQgVGS4RotegSSFzsoYHSoDgyxdLyAPLgMzpUqIFKhVhjVmvFRrzDvkN7kHIx85CpuSRcU6E1HiMrClP
-            CGcmIJkX9dYhkOu1VEwzmhG23EU1p5Y5X6IHXCtlvDIBRf/MmaIpxdbvEPNet2YZqaYZMRcm5sbkmCCkxm9BfHw4EyvOsjWJ6ZNhwUTh6C
-            ALRRGtBK+LHrbmXpuzxnlE9obilXVhwa1qeE7lSsFmXZQTUqxMblJXxPqsStp38J3MbLe9MtU7biIWPE/oDRSzFDgvP5xIqxx1Y/koUGHg
-            qVg+ETcU+SE0rNBDYGbl/rlLubgvz1S8D4N+/9R0kDOjWYaFvaBFg6NDxOw+39hLv/wFUD8AuKESAAA="
+            "SelectData" => $request->selectData
         ];
 
-        $item = $this->authenticate();
-
-        $content = Http::withOptions([
-            'verify' => false,
-        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/select', $data);
-
-        $resp = json_decode($content->body(), true);
-
-        return $resp;
+        return $this->sendRequest('/api/flight/select', $data);
     }
 
     public function bookFlight($request)
@@ -170,15 +146,8 @@ class Flight
             "BookingId" => "1707310600002"
         ];
 
-        $item = $this->authenticate();
 
-        $content = Http::withOptions([
-            'verify' => false,
-        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
-
-        $resp = json_decode($content->body(), true);
-
-        return $resp;
+        return $this->sendRequest('/api/flight/book', $data);
     }
 
     public function ticketFlight($request)
@@ -188,15 +157,22 @@ class Flight
             "PnrNumber" => " UPTR7U "
         ];
 
+        return $this->sendRequest('/api/flight/book', $data);
+    }
+
+    private function sendRequest($endpoint, $data)
+    {
+        $credential = $this->credentials('test');
+
         $item = $this->authenticate();
 
         $content = Http::withOptions([
             'verify' => false,
-        ])->withToken($item->access_token)->post($credential['url'] . '/api/flight/book', $data);
+        ])->withToken($item['access_token'])->post($credential['url'] .$endpoint, $data);
 
-        $resp = json_decode($content->body(), true);
-
-        return $resp;
+        return json_decode($content->body(), true);
     }
+
+
 
 }

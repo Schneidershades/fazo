@@ -27,28 +27,28 @@
                                         @csrf
                                         <div class="mb-3">
                                             <div class="custom-control custom-radio custom-control-inline">
-                                                <input id="oneway" name="flight-trip" class="custom-control-input" checked="" required="" type="radio">
-                                                <label class="custom-control-label" for="oneway">One Way</label>
+                                                <input id="oneway" name="flightSearchType" value="Oneway" class="custom-control-input" checked="" required="" type="radio">
+                                                <label class="custom-control-label" for="Oneway">One Way</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline">
-                                                <input id="roundtrip" name="flight-trip" class="custom-control-input" required="" type="radio">
-                                                <label class="custom-control-label" for="roundtrip">Round Trip</label>
+                                                <input id="roundtrip" name="flightSearchType" value="Return" class="custom-control-input" required="" type="radio">
+                                                <label class="custom-control-label" for="Return">Round Trip</label>
                                             </div>
                                         </div>
                                         <div class="form-row">
                                             <div class="col-lg-6 form-group">
-                                                <label for="flightFrom">From</label>
+                                                <label for="flightFrom">Depature</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control rounded-right" id="flightFrom" required="" placeholder="From">
+                                                    <input type="text" name="departure" class="form-control rounded-right" id="flightFrom" required="" placeholder="From">
                                                     <span class="icon-inside">
                                                     <i class="fas fa-map-marker-alt"></i>
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 form-group">
-                                                <label for="flightTo">To</label>
+                                                <label for="flightTo">Destination</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" id="flightTo" required="" placeholder="To">
+                                                    <input type="text" name="destination" class="form-control" id="flightTo" required="" placeholder="To">
                                                     <span class="icon-inside">
                                                     <i class="fas fa-map-marker-alt"></i>
                                                     </span>
@@ -57,18 +57,18 @@
                                         </div>
                                         <div class="form-row">
                                             <div class="col-lg-6 form-group">
-                                                <label for="flightDepart">Adult</label>
+                                                <label for="flightDepart">Departure Date</label>
                                                 <div class="position-relative">
-                                                    <input id="flightDepart" type="text" class="form-control" required="" placeholder="Pick a Date">
+                                                    <input id="flightDepart" name="depatureDate" type="text" class="form-control" required="" placeholder="Pick a Date">
                                                     <span class="icon-inside">
                                                     <i class="far fa-calendar-alt"></i>
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 form-group">
-                                                <label for="flightReturn">Return On</label>
+                                                <label for="flightReturn">Return Date</label>
                                                 <div class="position-relative">
-                                                    <input id="flightReturn" type="text" class="form-control" required="" placeholder="Pick a Date">
+                                                    <input id="flightReturn" name="returnDate" type="text" class="form-control" required="" placeholder="Pick a Date">
                                                     <span class="icon-inside">
                                                     <i class="far fa-calendar-alt"></i>
                                                     </span>
@@ -77,9 +77,9 @@
                                         </div>
                                         <div class="form-row">
                                             <div class="col-lg-4 form-group">
-                                                <label for="flightDepart">Depart On</label>
+                                                <label for="flightDepart">Adults</label>
                                                 <div class="position-relative">
-                                                    <input id="flightDepart" type="number" min="0" value="1" class="form-control" required="" placeholder="Number of Adult">
+                                                    <input id="flightDepart" name="adults"  type="number" min="0" value="1" class="form-control" required="" placeholder="Number of Adult">
                                                     <span class="icon-inside">
                                                     <i class="far fa-users"></i>
                                                     </span>
@@ -88,7 +88,7 @@
                                             <div class="col-lg-4 form-group">
                                                 <label for="flightReturn">Children</label>
                                                 <div class="position-relative">
-                                                    <input id="flightReturn" type="number" min="0" value="0" class="form-control" required="" placeholder="Number of Children">
+                                                    <input id="flightReturn" name="children" type="number" min="0" value="0" class="form-control" required="" placeholder="Number of Children">
                                                     <span class="icon-inside">
                                                     <i class="far fa-users"></i>
                                                     </span>
@@ -97,7 +97,7 @@
                                             <div class="col-lg-4 form-group">
                                                 <label for="flightReturn">Infant</label>
                                                 <div class="position-relative">
-                                                    <input id="flightReturn" type="number" min="0" value="0" class="form-control" required="" placeholder="Number of Infant">
+                                                    <input id="flightReturn" name="infants" type="number" min="0" value="0" class="form-control" required="" placeholder="Number of Infant">
                                                     <span class="icon-inside">
                                                     <i class="far fa-users"></i>
                                                     </span>
