@@ -104,7 +104,7 @@ class Flight
 
         $data = [
             "TargetCurrency" => "NGN",
-            "SelectData" => $request->selectData
+            "SelectData" => $request->SelectData
         ];
 
         return $this->sendRequest('/api/flight/select', $data);
