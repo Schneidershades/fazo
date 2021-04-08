@@ -11,12 +11,14 @@ class FlightPaymentController extends Controller
 {
     public function store(Request $request)
     {
-    	$resp = Flutterwave::verifyTransaction($request->payment_reference);
+    	$resp = Flutterwave::verifyTransaction($request->reference);
 
-    	if($resp['success'] == true){
-    		$place 
+    	if($resp['success'] == false){
+    		return $this->errorResponse('failed transaction');
     	}
 
-        return $this->showOne();
+    	Flight::bookFlight($request);
+
+        return $this->showMessage('good');
     }
 }

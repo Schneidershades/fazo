@@ -4,6 +4,7 @@ namespace App\Traits\Provider\Wakanow;
 
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class Flight
 {
@@ -74,7 +75,7 @@ class Flight
 
         if($request->flightSearchType == 'Return'){
             $data = [
-                "FlightSearchType" =>$request->flightSearchType,
+                "FlightSearchType" => $request->flightSearchType,
                 "Adults" => (string)$request->adults,
                 "Children" => (string)$request->children,
                 "Infants" => (string)$request->infants,
@@ -124,6 +125,8 @@ class Flight
             ],
             "BookingId" => $request->bookingId
         ];
+
+        Log::debug($data);
 
 
         return $this->sendRequest('/api/flight/book', $data);
