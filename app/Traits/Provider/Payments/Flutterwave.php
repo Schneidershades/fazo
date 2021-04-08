@@ -26,75 +26,91 @@ class Flutterwave
 
     public static function verifyTransaction($reference, $transactionId=null)
     {
-        $credentials = Flutterwave::credentials(env('FLUTTERWAVE_MODE'));
-        
         $ref = $reference;
         $amount = "";
         $currency = "";
 
-        $response = Http::post('https://api.ravepay.co/flwv3-pug/getpaidx/api/v2/verify', [
-            "SECKEY" => $credentials['secret_key'],
+        $query = array(
+            "SECKEY" => config('thirdpartyapi.flutterwave_secret_key'),
             "txref" => $ref
-        ]);
+        );
 
-        $resp = json_decode($response->body(), true);
+        $data_string = json_encode($query);
 
-        $orderNumber = $resp['data']['meta'];
-        $orderId = $orderNumber[0]['metavalue'];
-        $paymentStatus = $resp['data']['status'];
+        $ch = curl_init('https://api.ravepay.co/flwv3-pug/getpaidx/api/v2/verify');
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+
+        $response = curl_exec($ch);
+
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+
+        curl_close($ch);
+
+        return $resp = json_decode($response, true);
+
         $chargeResponsecode = $resp['data']['chargecode'];
-        $chargeAmount = $resp['data']['amount'];
-        $chargeCurrency = $resp['data']['currency'];
-        $payment_reference = $resp['data']['txref'];
-        $payment_gateway_charge = $resp['data']['appfee'];
-        $payment_gateway_remittance = $resp['data']['amountsettledforthistransaction'];
-        $payment_code = $resp['data']['chargecode'];
-        $payment_status = $resp['data']['status'];
+
+        // $orderNumber = $resp['data']['meta'];
+        // $orderId = $orderNumber[0]['metavalue'];
+        // $paymentStatus = $resp['data']['status'];
+        // $chargeAmount = $resp['data']['amount'];
+        // $chargeCurrency = $resp['data']['currency'];
+        // $payment_reference = $resp['data']['txref'];
+        // $payment_gateway_charge = $resp['data']['appfee'];
+        // $payment_gateway_remittance = $resp['data']['amountsettledforthistransaction'];
+        // $payment_code = $resp['data']['chargecode'];
+        // $payment_status = $resp['data']['status'];
 
 
-        $model = Order::where('receipt_number',  $orderId)->first();
+        // $model = Order::where('receipt_number',  $orderId)->first();
 
-        $discount = $model->total - $chargeAmount;
+        // $discount = $model->total - $chargeAmount;
 
-        $free_discount = false;
+        // $free_discount = false;
 
-        if($discount > 0){
-            $free_discount = true;
-        }
+        // if($discount > 0){
+        //     $free_discount = true;
+        // }
 
-        if (($chargeResponsecode == "00" || $chargeResponsecode == "0")) {
-            return [
-                'payment_method' => 'card',
-                'payment_gateway' => 'flutterwave',
-                'success' => true,
-                'payment' => true,
-                'payment_reference' => $payment_reference,
-                'payment_gateway_charge' => (float)$payment_gateway_charge,
-                'payment_gateway_remittance' => (float)$payment_gateway_remittance,
-                'payment_code' => $payment_code,
-                'payment_message' => $paymentStatus,
-                'payment_status' => $payment_status,
-                'orderId' => $orderId,
-                'total' => $chargeAmount,
-                'amount_paid' => $chargeAmount,
-                'discounted_amount' => $discount,
-                'free_discount' => $free_discount,
-            ]; 
-        } else {
+        // if (($chargeResponsecode == "00" || $chargeResponsecode == "0")) {
+        //     return [
+        //         'payment_method' => 'card',
+        //         'payment_gateway' => 'flutterwave',
+        //         'success' => true,
+        //         'payment' => true,
+        //         'payment_reference' => $payment_reference,
+        //         'payment_gateway_charge' => (float)$payment_gateway_charge,
+        //         'payment_gateway_remittance' => (float)$payment_gateway_remittance,
+        //         'payment_code' => $payment_code,
+        //         'payment_message' => $paymentStatus,
+        //         'payment_status' => $payment_status,
+        //         'orderId' => $orderId,
+        //         'total' => $chargeAmount,
+        //         'amount_paid' => $chargeAmount,
+        //         'discounted_amount' => $discount,
+        //         'free_discount' => $free_discount,
+        //     ];
+        // } else {
 
-            return [
-                'payment_method' => 'card-failure-process',
-                'payment_gateway' => 'flutterwave',
-                'success' => false,
-                'payment' => false,
-                'payment_reference' => $payment_reference,
-                'payment_gateway_charge' => (float)$payment_gateway_charge,
-                'payment_gateway_remittance' => (float)$payment_gateway_remittance,
-                'payment_code' => $payment_code,
-                'payment_message' => $paymentStatus,
-                'payment_status' => $payment_status,
-                'orderId' => $orderId,
-            ];
-        }
+        //     return [
+        //         'payment_method' => 'card-failure-process',
+        //         'payment_gateway' => 'flutterwave',
+        //         'success' => false,
+        //         'payment' => false,
+        //         'payment_reference' => $payment_reference,
+        //         'payment_gateway_charge' => (float)$payment_gateway_charge,
+        //         'payment_gateway_remittance' => (float)$payment_gateway_remittance,
+        //         'payment_code' => $payment_code,
+        //         'payment_message' => $paymentStatus,
+        //         'payment_status' => $payment_status,
+        //         'orderId' => $orderId,
+        //     ];
+        // }
     }
 }

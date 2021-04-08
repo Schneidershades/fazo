@@ -11,7 +11,7 @@ class FlightPaymentController extends Controller
 {
     public function store(Request $request)
     {
-    	$resp = Flutterwave::verifyTransaction($request->reference);
+    	return $resp = Flutterwave::verifyTransaction($request->reference);
 
     	if($resp['success'] == false){
     		return $this->errorResponse('failed transaction');
