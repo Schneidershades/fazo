@@ -113,21 +113,19 @@ class Flight
 
     public function bookFlight($request)
     {
+        // return $request;
         $data = [
-            "PassengerDetails" => $request->passengerDetails,
+            "PassengerDetails" => $request['passengerDetails'],
             "BookingItemModels" => [
                 [
                     "ProductType" => "Flight",
-                    "BookingData" => $request->bookingData,
-                    "BookingId" => $request->bookingId,
-                    "TargetCurrency" => $request->targetCurrency
+                    "BookingData" => $request['bookingData'],
+                    "BookingId" => $request['bookingId'],
+                    "TargetCurrency" => $request['targetCurrency']
                 ]
             ],
-            "BookingId" => $request->bookingId
+            "BookingId" => $request['bookingId']
         ];
-
-        Log::debug($data);
-
 
         return $this->sendRequest('/api/flight/book', $data);
     }
@@ -151,6 +149,9 @@ class Flight
         $content = Http::withOptions([
             'verify' => false,
         ])->withToken($item['access_token'])->post($credential['url'] .$endpoint, $data);
+
+        Log::debug($data);
+        Log::debug(json_decode($content->body(), true));
 
         return json_decode($content->body(), true);
     }

@@ -24,7 +24,7 @@ class Flutterwave
         }
     }
 
-    public static function verifyTransaction($reference, $transactionId=null)
+    public static function verifyTransaction($reference)
     {
         $ref = $reference;
         $amount = "";
@@ -52,65 +52,53 @@ class Flutterwave
 
         curl_close($ch);
 
-        return $resp = json_decode($response, true);
+        $resp = json_decode($response, true);
 
         $chargeResponsecode = $resp['data']['chargecode'];
 
-        // $orderNumber = $resp['data']['meta'];
-        // $orderId = $orderNumber[0]['metavalue'];
-        // $paymentStatus = $resp['data']['status'];
-        // $chargeAmount = $resp['data']['amount'];
-        // $chargeCurrency = $resp['data']['currency'];
-        // $payment_reference = $resp['data']['txref'];
-        // $payment_gateway_charge = $resp['data']['appfee'];
-        // $payment_gateway_remittance = $resp['data']['amountsettledforthistransaction'];
-        // $payment_code = $resp['data']['chargecode'];
-        // $payment_status = $resp['data']['status'];
+        $orderNumber = $resp['data']['meta'];
+        $orderId = $resp['data']['txref'];
+        $paymentStatus = $resp['data']['status'];
+        $chargeAmount = $resp['data']['amount'];
+        $chargeCurrency = $resp['data']['currency'];
+        $payment_reference = $resp['data']['txref'];
+        $payment_gateway_charge = $resp['data']['appfee'];
+        $payment_gateway_remittance = $resp['data']['amountsettledforthistransaction'];
+        $payment_code = $resp['data']['chargecode'];
+        $payment_status = $resp['data']['status'];
 
 
-        // $model = Order::where('receipt_number',  $orderId)->first();
+        if (($chargeResponsecode == "00" || $chargeResponsecode == "0")) {
+            return [
+                'payment_method' => 'card',
+                'payment_gateway' => 'flutterwave',
+                'success' => true,
+                'payment' => true,
+                'payment_reference' => $payment_reference,
+                'payment_gateway_charge' => (float)$payment_gateway_charge,
+                'payment_gateway_remittance' => (float)$payment_gateway_remittance,
+                'payment_code' => $payment_code,
+                'payment_message' => $paymentStatus,
+                'payment_status' => $payment_status,
+                'orderId' => $orderId,
+                'total' => $chargeAmount,
+                'amount_paid' => $chargeAmount,
+            ];
+        } else {
 
-        // $discount = $model->total - $chargeAmount;
-
-        // $free_discount = false;
-
-        // if($discount > 0){
-        //     $free_discount = true;
-        // }
-
-        // if (($chargeResponsecode == "00" || $chargeResponsecode == "0")) {
-        //     return [
-        //         'payment_method' => 'card',
-        //         'payment_gateway' => 'flutterwave',
-        //         'success' => true,
-        //         'payment' => true,
-        //         'payment_reference' => $payment_reference,
-        //         'payment_gateway_charge' => (float)$payment_gateway_charge,
-        //         'payment_gateway_remittance' => (float)$payment_gateway_remittance,
-        //         'payment_code' => $payment_code,
-        //         'payment_message' => $paymentStatus,
-        //         'payment_status' => $payment_status,
-        //         'orderId' => $orderId,
-        //         'total' => $chargeAmount,
-        //         'amount_paid' => $chargeAmount,
-        //         'discounted_amount' => $discount,
-        //         'free_discount' => $free_discount,
-        //     ];
-        // } else {
-
-        //     return [
-        //         'payment_method' => 'card-failure-process',
-        //         'payment_gateway' => 'flutterwave',
-        //         'success' => false,
-        //         'payment' => false,
-        //         'payment_reference' => $payment_reference,
-        //         'payment_gateway_charge' => (float)$payment_gateway_charge,
-        //         'payment_gateway_remittance' => (float)$payment_gateway_remittance,
-        //         'payment_code' => $payment_code,
-        //         'payment_message' => $paymentStatus,
-        //         'payment_status' => $payment_status,
-        //         'orderId' => $orderId,
-        //     ];
-        // }
+            return [
+                'payment_method' => 'card-failure-process',
+                'payment_gateway' => 'flutterwave',
+                'success' => false,
+                'payment' => false,
+                'payment_reference' => $payment_reference,
+                'payment_gateway_charge' => (float)$payment_gateway_charge,
+                'payment_gateway_remittance' => (float)$payment_gateway_remittance,
+                'payment_code' => $payment_code,
+                'payment_message' => $paymentStatus,
+                'payment_status' => $payment_status,
+                'orderId' => $orderId,
+            ];
+        }
     }
 }
